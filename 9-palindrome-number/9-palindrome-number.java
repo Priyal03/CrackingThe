@@ -1,17 +1,24 @@
 class Solution {
+
     //do a complete reverse and then compare it in O(n) times
-    //
+
     public boolean isPalindrome(int x) {
         
-        if(x>=0){
+        if(x<0 || (x%10==0 && x!=0))
+            return false;
+        
+        int rev = 0, num=x;
+        
+        while(num>rev){
             
-            String first = String.valueOf(x);
-            StringBuilder sb = new StringBuilder(first).reverse(); 
-            String two = sb.toString();
+            int curr = num%10;
             
+            rev = rev*10+curr;
             
-            return two.equalsIgnoreCase(first);
+            num = num/10;
         }
-        return false;
+        
+        return ( num == rev || num== rev/10);
+    
     }
 }
