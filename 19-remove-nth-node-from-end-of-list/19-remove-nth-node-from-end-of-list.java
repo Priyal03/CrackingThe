@@ -17,9 +17,6 @@ class Solution {
         pointer.next = head;
         int nth = h-n+1;
         
-        if(h==1 && n==1)
-            return null; 
-        
         ListNode temp=pointer;
         while(nth-->1)
             temp=temp.next;
