@@ -11,28 +11,22 @@
 class Solution {
     public ListNode removeNthFromEnd(ListNode head, int n) {
         
-        int h = getHeight(head);
+        ListNode first=new ListNode(0);
+        first.next = head;
         
-        ListNode pointer=new ListNode(0);
-        pointer.next = head;
-        int nth = h-n+1;
+        ListNode pointer1=first;
+        ListNode pointer2=first;
         
-        ListNode temp=pointer;
-        while(nth-->1)
-            temp=temp.next;
-        
-        temp.next = temp.next.next;
-        
-        return pointer.next;
-    }
-    
-    public int getHeight(ListNode head){
-        
-        int count=0;
-        while(head!=null){
-            count++;
-            head=head.next;
+        while(n-->0){
+            pointer1=pointer1.next;
         }
-        return count;
+        
+        while(pointer1.next!=null){
+            pointer1=pointer1.next;
+            pointer2=pointer2.next;
+        }
+        pointer2.next=pointer2.next.next;
+        
+        return first.next;
     }
 }
