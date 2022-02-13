@@ -11,19 +11,24 @@
 class Solution {
     public ListNode swapPairs(ListNode head) {
         
-        ListNode first = head;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
         
-        if(head==null || head.next==null){
-            return head;   
+        ListNode prev = dummy;
+        while(head!=null && head.next!=null){
+            
+            ListNode first = head;
+            ListNode second = first.next;  
+            ListNode newHead=second.next;   //saving the new head
+        
+            prev.next=second;
+            second.next = first;
+            first.next=newHead; 
+            
+            head = newHead;
+            prev = first;
         }
         
-        ListNode second = first.next;  
-        ListNode newHead=second.next;   //saving the new head
-        
-        head = second;
-        first.next=swapPairs(newHead); //uses of recursion over here. 
-        head.next = first;
-        
-        return head;
+        return dummy.next; //(how the dummy.next will still be pointing to the head?)
     }
 }
