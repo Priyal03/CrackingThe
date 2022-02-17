@@ -2,19 +2,20 @@ class Solution {
     public void moveZeroes(int[] nums) {
         
         int index=0;
-        //one pass for moving the integers on left side.
+        
         for(int i=0;i<nums.length;i++){
             
             if(nums[i]!=0){
                 
-                nums[index]=nums[i];
+                int temp = nums[index];
+                
+                nums[index]=nums[i]; //moving the non zero element on the left most side
+               
+                nums[i]=temp;  //why cant we marking the curr empty element zero?? why to swap ?? 
+                
                 index++;
             }
         }
-        
-        //one pass for trailing zeroes
-        for(int i=index;i<nums.length;i++){
-            nums[i]=0;
-        }
+       
     }
 }
