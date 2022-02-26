@@ -1,44 +1,37 @@
 class Solution {
     public int maxProfit(int[] inventory, int orders) {
-        
-        TreeMap<Long, Long> treeMap = new TreeMap<>(); // <The number of balls of specific color, Count>
-        
-        for (int number : inventory)
-            treeMap.put((long)number, treeMap.getOrDefault((long)number, 0L) + 1);
-        
-        long result = 0, mod = (long)Math.pow(10, 9) + 7;
-        
-        while (orders > 0)
-        {
-            Map.Entry<Long, Long> maxEntry = treeMap.pollLastEntry();
-            long maxNumber = maxEntry.getKey(), maxCount = maxEntry.getValue(), subMaxNumber = 0;
-            
-            if (!treeMap.isEmpty())
-                subMaxNumber = treeMap.lastKey();
-            
-            long totalCount = (maxNumber - subMaxNumber) * maxCount;
-            
-            if (orders >= totalCount)
-            {
-                long n = maxNumber - subMaxNumber, a1 = maxNumber, an = subMaxNumber + 1; 
-            
-                result = (result + n * (a1 + an) / 2 * maxCount) % mod; // Note: Sum of arithmetic sequence n * (a1 + an) / 2
-                orders -= n * maxCount;
-                
-                treeMap.put(subMaxNumber, treeMap.getOrDefault(subMaxNumber, 0L) + maxCount); // Get the orders until maxNumber equals subMaxNumber
-            }
+        int lo = 1, hi = Arrays.stream(inventory).max().getAsInt();
+        Arrays.sort(inventory);
+
+        while (lo < hi) {
+            int mid = lo + (hi - lo + 1) / 2;
+            if (getCount(inventory, mid) < orders)
+                hi = mid - 1;
             else
-            {
-                long n = orders / maxCount, a1 = maxNumber, an = a1 - n + 1;
-                
-                result = (result + n * (a1 + an) / 2 * maxCount) % mod;
-                orders -= n * maxCount;
-                
-                result = (result + orders * (an - 1)) % mod;
-                break; // orders = 0
-            }
+                lo = mid;
         }
-        
-        return (int)result;
+
+        int minPrice = lo, ordered = 0;
+        long profit = 0;
+
+        for (int i = inventory.length - 1; i >= 0; i--) {
+            int curPrice = inventory[i];
+            if (curPrice <= minPrice) break;
+            profit += (long) (curPrice + minPrice + 1) * (curPrice - minPrice) / 2;
+            ordered += curPrice - minPrice;
+        }
+
+        profit += (long) minPrice * (orders - ordered);
+        profit = profit % 1000000007;
+        return (int) profit;
+    }
+
+    private long getCount(int[] inventory, int mid) {
+        long count = 0;
+        for (int i = inventory.length - 1; i >= 0; i--) {
+            if (inventory[i] < mid) break;
+            count += inventory[i] - mid + 1;
+        }
+        return count;
     }
 }
