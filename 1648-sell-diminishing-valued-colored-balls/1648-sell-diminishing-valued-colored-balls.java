@@ -1,37 +1,40 @@
 class Solution {
     public int maxProfit(int[] inventory, int orders) {
-        int lo = 1, hi = Arrays.stream(inventory).max().getAsInt();
-        Arrays.sort(inventory);
-
+        
+   int max = 0;
+        for (int inv : inventory) {
+            max = Math.max(max, inv);
+        }
+        int lo = 0, hi = max;
         while (lo < hi) {
-            int mid = lo + (hi - lo + 1) / 2;
-            if (getCount(inventory, mid) < orders)
-                hi = mid - 1;
-            else
+            int mid = hi + (lo - hi) / 2;
+            if (getThreshold(inventory, orders, mid)) {
                 lo = mid;
+            } else {
+                hi = mid - 1;
+            }
         }
-
-        int minPrice = lo, ordered = 0;
-        long profit = 0;
-
-        for (int i = inventory.length - 1; i >= 0; i--) {
-            int curPrice = inventory[i];
-            if (curPrice <= minPrice) break;
-            profit += (long) (curPrice + minPrice + 1) * (curPrice - minPrice) / 2;
-            ordered += curPrice - minPrice;
+        long res = 0L;
+        for (int inv : inventory) {
+            if (inv > lo) {
+                res += (long) (inv + lo + 1) * (inv - lo) / 2;
+                orders -= (inv - lo);
+            }
         }
-
-        profit += (long) minPrice * (orders - ordered);
-        profit = profit % 1000000007;
-        return (int) profit;
+        res += (long) (lo + 1) * orders;
+        return (int) (res % 1_000_000_007);
     }
-
-    private long getCount(int[] inventory, int mid) {
-        long count = 0;
-        for (int i = inventory.length - 1; i >= 0; i--) {
-            if (inventory[i] < mid) break;
-            count += inventory[i] - mid + 1;
+    
+    private boolean getThreshold(int[] nums, int k, int mid) {
+        int res = 0;
+        for (int num : nums) {
+            if (num > mid) {
+                res += num - mid;
+                if (res >= k) {
+                    return true;
+                }
+            }
         }
-        return count;
+        return false;
     }
 }
