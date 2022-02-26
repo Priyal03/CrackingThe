@@ -1,46 +1,44 @@
 class Solution {
-    private long mod = 1000000007L;
     public int maxProfit(int[] inventory, int orders) {
-		// we use pq to find the most balls
-        PriorityQueue<Long> pq = new PriorityQueue<>((x, y) -> Long.compare(y, x));
-        pq.offer(0L);
-		
-        // we use map to count the balls
-        Map<Long, Long> map = new HashMap<>();
-        map.put(0L, 0L);
         
-        for (int j : inventory) {
-            long i = (long)j;
-            if (map.containsKey(i)) {
-                map.put(i, map.get(i) + 1);
+        TreeMap<Long, Long> treeMap = new TreeMap<>(); // <The number of balls of specific color, Count>
+        
+        for (int number : inventory)
+            treeMap.put((long)number, treeMap.getOrDefault((long)number, 0L) + 1);
+        
+        long result = 0, mod = (long)Math.pow(10, 9) + 7;
+        
+        while (orders > 0)
+        {
+            Map.Entry<Long, Long> maxEntry = treeMap.pollLastEntry();
+            long maxNumber = maxEntry.getKey(), maxCount = maxEntry.getValue(), subMaxNumber = 0;
+            
+            if (!treeMap.isEmpty())
+                subMaxNumber = treeMap.lastKey();
+            
+            long totalCount = (maxNumber - subMaxNumber) * maxCount;
+            
+            if (orders >= totalCount)
+            {
+                long n = maxNumber - subMaxNumber, a1 = maxNumber, an = subMaxNumber + 1; 
+            
+                result = (result + n * (a1 + an) / 2 * maxCount) % mod; // Note: Sum of arithmetic sequence n * (a1 + an) / 2
+                orders -= n * maxCount;
+                
+                treeMap.put(subMaxNumber, treeMap.getOrDefault(subMaxNumber, 0L) + maxCount); // Get the orders until maxNumber equals subMaxNumber
             }
-            else {
-                pq.offer(i);
-                map.put(i, 1L);
+            else
+            {
+                long n = orders / maxCount, a1 = maxNumber, an = a1 - n + 1;
+                
+                result = (result + n * (a1 + an) / 2 * maxCount) % mod;
+                orders -= n * maxCount;
+                
+                result = (result + orders * (an - 1)) % mod;
+                break; // orders = 0
             }
         }
         
-        long res = 0;
-        while (orders > 0) {
-            long ball = pq.poll(), nextBall = pq.peek();
-            long times = map.get(ball);
-            long diff = Math.min(ball - nextBall, orders / times);
-            if (diff == 0) {
-                res = (res + orders * ball) % mod;
-                break;
-            }
-            long sum = (ball * 2 + 1 - diff) * diff / 2 * times;
-            res = (res + sum) % mod;
-            orders -= diff * times;
-            if (!map.containsKey(ball - diff)) {
-                map.put(ball - diff, map.get(ball));
-                pq.offer(ball - diff);
-            }
-            else {
-                map.put(ball - diff, map.get(ball - diff) + map.get(ball));
-            }
-            map.remove(ball);
-        }
-        return (int) res;
+        return (int)result;
     }
 }
