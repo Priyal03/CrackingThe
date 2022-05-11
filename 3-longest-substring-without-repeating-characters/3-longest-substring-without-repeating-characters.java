@@ -1,5 +1,8 @@
 class Solution {
     //chotu
+    
+    //time - O(n)
+    //space - O(m,n) for hashmap 
     public int lengthOfLongestSubstring(String s) {
         
         Map<Character,Integer> store = new HashMap<Character,Integer>();//to store the current window
