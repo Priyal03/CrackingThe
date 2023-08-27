@@ -1,0 +1,28 @@
+class Solution {
+    List<String> paren = new ArrayList<String>();
+    public List<String> generateParenthesis(int n) {
+        
+        if(n>0){
+            generatePair("",n,0,0);
+        }
+        return paren;
+    }
+
+    public void generatePair(String s, int n, int open, int close){
+
+        
+        if(s.length()==2*n){
+            paren.add(s);
+            return;
+        }
+        if(open<n){
+            
+            generatePair(s+"(",n,open+1,close);
+        }
+        if(close<open){
+           
+            generatePair(s+")",n,open,close+1);
+        }
+        
+    }
+}
